@@ -1,33 +1,52 @@
-# IMG_Option_CostProfit_Calculator
-This is a calculator created for IMG group, to calculate the cost for the option it will take with PS proposed
+IMG Southbank — Report & Interactive Tool
 
-
-Site: 292–306 City Road, Southbank Status: Private & confidential — internal discussion tool for IMG Investment Joint Stock Company and Purple Sand
+File: IMG_Southbank_Report_and_Tool.html Site: 292–306 City Road, Southbank Status: Private & confidential — internal discussion tool for IMG Investment Joint Stock Company and Purple Sand
 
 What this is
 
-A self-contained, offline HTML calculator (no install, no internet connection needed — just open it in any browser) that weighs the fixed cost of pursuing the "change the endorsed plan" option against the profit uplift it could unlock. It's built to accompany the 3-Month Project Review proposal and the follow-up cost/uplift discussion, so numbers can be tested live in a meeting rather than re-calculated by hand each time an assumption changes.
+A self-contained, offline HTML file (no install, no internet connection needed — just open it in any browser) that presents the basement decision — build now on the current endorsed plan, or spend 3 months with Purple Sand reviewing it first — in two linked views:
 
-The option being tested is: remove the basement, move car parking into the podium, and lift NSA/GBA efficiency — reviewed over a run time of 6 to 24 months.
+Report tab — the fixed, presentation-ready version with locked figures, for circulating to the board.
+Tool tab — the same analysis rebuilt with editable assumptions, for testing different numbers live in a meeting.
 
-How it's laid out
+Both tabs share one page and the same underlying model, so the Tool's live output can always be checked against the Report's fixed numbers.
 
-Section 1 — Run Time & Cost Assumptions. A slider sets the review run time (6–24 months). Editable fields let you adjust the average annual land tax, Purple Sand's initial and ongoing fees, the architect/consultant redesign budget, the GST rate, and the NSA sell rate ($/m²). Every other section recalculates live as these change.
+Report tab
 
-Section 2 — Inherited Cost Summary. Adds up what the option costs before any construction or design work begins: Purple Sand's fee for the first 3 months, Purple Sand's ongoing monthly fee from month 4 through to the selected run time, the one-off architect/consultant budget, and land tax pro-rated for however long the review runs (run time ÷ 12 × average annual land tax, rather than a flat assumption). GST is applied to the two Purple Sand fees only, not to the consultant budget or land tax.
+Static, non-editable. Structure:
 
-Section 3 — Basement Removal Saving. An editable field for the construction cost that would be avoided by removing the basement — defaults to $0 because this hasn't yet been quantified by a QS. Whatever figure is entered here is treated as a benefit and added into the net position in Section 4.
+Key Summary — IMG has asked Purple Sand to present two options/paths.
+Project Overview and Recommendation — the basement cost risk (Hickory's $153M vs Purple Sand's $161.4M, basement alone $30–35M, flood-zone risk pushing Hickory toward ~$200M), Option 1 vs Option 2 side by side, and an Option 1 profit/loss table at both the original $161.4M and escalated $200M construction cost.
+Cost of the Review — Stage 1 & Stage 2 — Stage 1 (first 3 months, $110,000) and Stage 2 (months 4–12, $1,426,175) broken out separately, totalling $1,536,175, plus the basement removal saving ($30M conservative / $35M expected) that offsets it.
+Net Position — Option 2's net position against Option 1's own profit/loss, across 8–12% NSA gain, 3%/8% sales cost, and both basement saving levels.
+The Decision — summary paragraph: Option 2 nets $47M–$64M better than Option 1 on current costing.
+Tool tab
 
-Section 4 — Net Position. Shows profit uplift for NSA gains of 8–12%, under both a 3% and an 8% sales-and-marketing cost scenario, then nets it against Section 2's inherited cost and adds Section 3's basement saving:
+Same structure, but every input feeding the model is editable:
 
-Net position = profit uplift + basement saving − total inherited cost
+Stage 2 run time (months 4 onward; 3–21 months, i.e. 6–24 months total)
+Stage 1 fee and Stage 2 monthly fee (both ex GST)
+Architect & consultant redesign budget
+Average annual land tax (pro-rated for run time)
+GST rate
+NSA sell rate ($/m²)
+Sales & marketing cost — low and high scenario (%)
+Basement removal saving — conservative and expected
+Option 1 construction cost (escalated — drives the Option 1 profit/loss table)
 
-Each row is colour-coded — green where the option is net-positive at that run time and efficiency gain, red where it isn't.
+Changing any field live-updates: the Stage 1/Stage 2/total cost breakdown, the Option 1 profit/loss table (at both the original $161.4M and the editable escalated construction cost), and all four net-position tables (conservative/expected basement saving × low/high sales cost).
+
+Net position = NSA profit uplift + basement saving − total inherited cost (Stage 1 + Stage 2)
+
+Rows are colour-coded — green where Option 2 is net-positive at that combination, red where it isn't. Option 1's profit/(loss) is shown alongside for direct comparison and is always shown in red on current costing.
+
+The base feasibility inputs (current NSA 17,900 m², GBA 26,901 m², base GRV $297.1M, and the other fixed cost lines — land, consultants, authorities, PM, building surveyor, marketing, legal, contingency, finance) are carried over from the original proposal and are not editable in this tool, since they don't move under either option.
 
 Key methodology notes
-The NSA uplift calculation assumes GBA is unchanged (efficiency comes from redesigning within the existing envelope), so land, hard construction, consultants, authorities, project management, insurance, marketing, legal, contingency and finance costs don't move. Only GST (1/11 of the extra GRV) and sales commission scale with the additional revenue — which is why most of the extra GRV converts to profit.
-Base case profit figures ($13.3M at 3% sales cost, -$1.5M at 8%) and the $297.1M base GRV are carried over from the original feasibility in the proposal document, at the current 17,900 m² NSA.
+The NSA uplift calculation assumes GBA is unchanged (efficiency comes from redesigning within the existing envelope), so land, hard construction, consultants, authorities, project management, insurance, marketing, legal, contingency and finance costs don't move. Only GST (1/11 of the extra GRV) and sales commission scale with the additional revenue.
+Option 1's profit/(loss) is recalculated from the same base feasibility, swapping in either the original $161.4M Purple Sand construction estimate or the escalated Hickory figure — everything else held constant.
+GST applies to the two Purple Sand fees (Stage 1 and Stage 2) only, not to the consultant budget or land tax.
 All figures are preliminary and indicative — consistent with the caveats in the underlying proposal, they're subject to detailed QS, GST, finance and design verification before being relied upon.
 Who to talk to about the assumptions
 
-Land tax, PS fee, consultant budget and basement cost figures were set based on the discussion with Pat on this project — adjust them directly in the tool if any of those change.
+Land tax, PS fee, consultant budget, construction cost and basement saving figures were set based on the discussion with Pat on this project — adjust them directly in the Tool tab if any of those change.
