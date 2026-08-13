@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMG Southbank — Option Cost vs Uplift Calculator</title>
+<style>
+  :root {
+    --purple: #5B2C83;
+    --purple-dark: #3D1D5A;
+    --purple-light: #9B6FC4;
+    --sand: #C9A876;
+    --charcoal: #2B2B2E;
+    --grey: #6B6B70;
+    --lightgrey: #F2F0F5;
+    --green: #2E7D4F;
+    --green-bg: #E7F5EC;
+    --red: #B94A48;
+    --red-bg: #FBEAEA;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Calibri, Arial, sans-serif;
+    background: #F7F6FA;
+    color: var(--charcoal);
+    margin: 0;
+    padding: 28px 18px 60px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, var(--purple-dark), var(--purple));
+    color: white;
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 22px;
+  }
+  header .tag {
+    color: var(--sand);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  header h1 { margin: 8px 0 6px; font-size: 26px; }
+  header p { margin: 0; color: #D9C9EE; font-size: 14px; max-width: 700px; line-height: 1.5; }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(30,20,50,0.08);
+    border: 1px solid #EAE6F0;
+  }
+  .card h2 {
+    font-size: 16px;
+    color: var(--purple-dark);
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--purple);
+  }
+  .card h3 { font-size: 14px; color: var(--purple); margin: 18px 0 8px; }
+
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 28px;
+  }
+  @media (max-width: 700px) { .controls-grid { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12.5px; font-weight: 600; color: var(--grey); }
+  .field .value-badge {
+    display: inline-block;
+    background: var(--lightgrey);
+    color: var(--purple-dark);
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    margin-left: 6px;
+  }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--purple);
+    height: 6px;
+  }
+  .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: #A0A0A8; }
+  input[type=number] {
+    border: 1px solid #DAD4E6;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--charcoal);
+    width: 100%;
+  }
+  input[type=number]:focus { outline: 2px solid var(--purple-light); border-color: var(--purple); }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 4px;}
+  @media (max-width: 700px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: var(--purple-dark);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .stat .v { font-size: 20px; font-weight: 800; }
+  .stat .l { font-size: 11px; color: #D9C9EE; margin-top: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { padding: 9px 10px; text-align: right; border-bottom: 1px solid #EEEAF3; }
+  th:first-child, td:first-child { text-align: left; }
+  th {
+    background: var(--purple);
+    color: white;
+    font-weight: 700;
+    font-size: 12.5px;
+  }
+  tbody tr:nth-child(even) { background: #FAF9FC; }
+  tfoot td {
+    font-weight: 800;
+    background: var(--lightgrey);
+    border-top: 2px solid var(--purple);
+    color: var(--purple-dark);
+  }
+  .pos { color: var(--green); font-weight: 700; }
+  .neg { color: var(--red); font-weight: 700; }
+  .cell-pos { background: var(--green-bg) !important; }
+  .cell-neg { background: var(--red-bg) !important; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+
+  .note {
+    font-size: 12px;
+    color: var(--grey);
+    background: #FBF9FD;
+    border-left: 3px solid var(--purple-light);
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+  .badge-scenario {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .badge-3 { background: #EFE6F7; color: var(--purple-dark); }
+  .badge-8 { background: #FBEAEA; color: var(--red); }
+
+  footer { text-align: center; color: #A0A0A8; font-size: 11.5px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="tag">Private &amp; Confidential — Interactive Tool</div>
+    <h1>Option Cost vs Profit Uplift Calculator</h1>
+    <p>292–306 City Road, Southbank. Models the fixed cost of pursuing the "change the endorsed plan" option (Purple Sand engagement, architect/consultant redesign, land tax holding cost) against the profit uplift from an NSA efficiency gain of 8–12%, for a review/optimisation run time of 6–24 months.</p>
+  </header>
+
+  <div class="card">
+    <h2>1. Run Time &amp; Cost Assumptions</h2>
+    <div class="controls-grid">
+      <div class="field">
+        <label>Run time (months) <span class="value-badge" id="runtimeLabel">12 months</span></label>
+        <input type="range" id="runtime" min="6" max="24" step="1" value="12">
+        <div class="range-labels"><span>6 months (min)</span><span>24 months (2 years max)</span></div>
+      </div>
+      <div class="field">
+        <label>Average annual land tax ($/yr, used pro-rata for the run time)</label>
+        <input type="number" id="avgLandTax" value="777675" step="1000">
+      </div>
+      <div class="field">
+        <label>PS initial engagement — first 3 months (ex GST)</label>
+        <input type="number" id="psInitial" value="100000" step="1000">
+      </div>
+      <div class="field">
+        <label>PS ongoing fee — from month 4 (ex GST / month)</label>
+        <input type="number" id="psMonthly" value="15000" step="500">
+      </div>
+      <div class="field">
+        <label>Architect &amp; consultant redesign budget (one-off)</label>
+        <input type="number" id="consultantBudget" value="500000" step="5000">
+      </div>
+      <div class="field">
+        <label>GST rate</label>
+        <input type="number" id="gstRate" value="10" step="1" min="0" max="30"> <span style="font-size:11px;color:#999;">% (applies to PS fees only)</span>
+      </div>
+      <div class="field">
+        <label>NSA sell rate ($/m², blended, incl GST)</label>
+        <input type="number" id="nsaRate" value="16000" step="500">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. Inherited Cost Summary</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="v" id="statPS">–</div><div class="l">Purple Sand fees (incl GST)</div></div>
+      <div class="stat"><div class="v" id="statConsultant">–</div><div class="l">Architect / consultant budget</div></div>
+      <div class="stat"><div class="v" id="statLandTax">–</div><div class="l">Land tax (pro-rata, run time)</div></div>
+      <div class="stat" style="background: var(--sand); color: var(--purple-dark);"><div class="v" id="statTotal">–</div><div class="l" style="color:#5B2C83;">Total inherited cost</div></div>
+    </div>
+
+    <table style="margin-top:18px;">
+      <thead><tr><th>Item</th><th>Basis</th><th>Ex GST</th><th>GST</th><th>Incl GST</th></tr></thead>
+      <tbody id="costBreakdownBody"></tbody>
+      <tfoot><tr><td>TOTAL</td><td id="fTotalBasis"></td><td id="fTotalEx"></td><td id="fTotalGst"></td><td id="fTotalIncl"></td></tr></tfoot>
+    </table>
+    <div class="note">PS ongoing fee runs from month 4 to the selected run time. Land tax is pro-rated for the run time (run time ÷ 12 × average annual land tax) rather than a fixed 2-year assumption, so it scales as you adjust the slider. GST is applied to the two Purple Sand fees only, per your confirmed assumption — not to the consultant budget or land tax.</div>
+  </div>
+
+  <div class="card">
+    <h2>3. Basement Removal Saving</h2>
+    <p style="font-size:13px;color:var(--grey);margin-top:-4px;">The report flagged that removing/reducing the basement and moving parking into the podium could produce a substantial construction saving, still to be quantified. Enter your estimate below — it is added into the net position in Section 4.</p>
+    <div class="controls-grid">
+      <div class="field">
+        <label>Build cost of basement (avoided cost if removed)</label>
+        <input type="number" id="basementSaving" value="0" step="500000">
+      </div>
+      <div class="field" style="justify-content:center;">
+        <div class="note" style="margin-top:0;">Enter $0 if this has not yet been quantified by the QS. This figure is added on top of the profit uplift, since avoiding this spend is a direct benefit of the option.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. Net Position — Profit Uplift + Basement Saving Less Inherited Cost</h2>
+    <p style="font-size:13px;color:var(--grey);margin-top:-4px;">NSA gain applied to the current 17,900 m² NSA base at the sell rate set in Section 1. Extra GRV converts to profit less GST (1/11) and sales commission only, since GBA-tied costs (land, construction, consultants, authorities, PM, insurance, marketing, legal, contingency, finance) are unchanged.</p>
+
+    <div class="stat-row" style="grid-template-columns: repeat(3, 1fr); margin-bottom:16px;">
+      <div class="stat"><div class="v" id="statUpliftNote">±</div><div class="l">Profit uplift (varies by gain %, see tables)</div></div>
+      <div class="stat"><div class="v" id="statBasementDisplay">–</div><div class="l">+ Basement saving</div></div>
+      <div class="stat" style="background: var(--purple);"><div class="v" id="statInheritedDisplay">–</div><div class="l">− Total inherited cost</div></div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <span class="badge-scenario badge-3">3% sales cost scenario</span>
+        <table>
+          <thead><tr><th>NSA gain</th><th>Profit uplift</th><th>+ Basement saving</th><th>Net position</th></tr></thead>
+          <tbody id="table3Body"></tbody>
+        </table>
+      </div>
+      <div>
+        <span class="badge-scenario badge-8">8% sales cost scenario</span>
+        <table>
+          <thead><tr><th>NSA gain</th><th>Profit uplift</th><th>+ Basement saving</th><th>Net position</th></tr></thead>
+          <tbody id="table8Body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note">Net position = profit uplift from the efficiency gain, <strong>plus</strong> the basement build cost saving (Section 3), <strong>minus</strong> the total inherited cost (Section 2) at the selected run time. Green = net positive (the review pays for itself), red = net negative.</div>
+  </div>
+
+  <footer>
+    Preliminary, indicative figures only — subject to detailed QS, GST, finance and design verification. Not for distribution outside IMG Investment Joint Stock Company and Purple Sand.
+  </footer>
+</div>
+
+<script>
+function fmtM(n) {
+  const sign = n < 0 ? "-" : "";
+  return sign + "$" + (Math.abs(n)/1e6).toFixed(2) + "M";
+}
+function fmt0(n) {
+  return "$" + Math.round(n).toLocaleString();
+}
+
+const GBA = 26901;
+const CURRENT_NSA = 17900;
+const GAINS = [0.08, 0.09, 0.10, 0.11, 0.12];
+const SCEN = {
+  s3: { baseProfit: 13.3e6, commission: 0.03 },
+  s8: { baseProfit: -1.5e6, commission: 0.08 },
+};
+
+function calcUplift(pct, scen, rate) {
+  const extraNSA = CURRENT_NSA * pct;
+  const extraGRV = extraNSA * rate;
+  const incGst = extraGRV / 11;
+  const incComm = extraGRV * scen.commission;
+  const newProfit = scen.baseProfit + extraGRV - incGst - incComm;
+  const uplift = newProfit - scen.baseProfit;
+  return { extraNSA, extraGRV, uplift };
+}
+
+function recalc() {
+  const runtime = parseInt(document.getElementById('runtime').value);
+  document.getElementById('runtimeLabel').textContent = runtime + " months (" + (runtime/12).toFixed(1) + " yrs)";
+
+  const psInitial = parseFloat(document.getElementById('psInitial').value) || 0;
+  const psMonthly = parseFloat(document.getElementById('psMonthly').value) || 0;
+  const consultantBudget = parseFloat(document.getElementById('consultantBudget').value) || 0;
+  const avgLandTax = parseFloat(document.getElementById('avgLandTax').value) || 0;
+  const gstRate = (parseFloat(document.getElementById('gstRate').value) || 0) / 100;
+  const nsaRate = parseFloat(document.getElementById('nsaRate').value) || 0;
+  const basementSaving = parseFloat(document.getElementById('basementSaving').value) || 0;
+
+  const ongoingMonths = Math.max(0, runtime - 3);
+
+  const psInitialGst = psInitial * gstRate;
+  const psInitialIncl = psInitial + psInitialGst;
+
+  const psOngoingEx = psMonthly * ongoingMonths;
+  const psOngoingGst = psOngoingEx * gstRate;
+  const psOngoingIncl = psOngoingEx + psOngoingGst;
+
+  const landTaxTotal = (runtime / 12) * avgLandTax;
+
+  const psTotalIncl = psInitialIncl + psOngoingIncl;
+  const totalEx = psInitial + psOngoingEx + consultantBudget + landTaxTotal;
+  const totalGst = psInitialGst + psOngoingGst;
+  const grandTotal = totalEx + totalGst;
+
+  // stat cards
+  document.getElementById('statPS').textContent = fmtM(psTotalIncl);
+  document.getElementById('statConsultant').textContent = fmtM(consultantBudget);
+  document.getElementById('statLandTax').textContent = fmtM(landTaxTotal);
+  document.getElementById('statTotal').textContent = fmtM(grandTotal);
+
+  // breakdown table
+  const rows = [
+    ["PS initial engagement", "3 months, fixed fee", psInitial, psInitialGst, psInitialIncl],
+    ["PS ongoing fee", ongoingMonths + " months × " + fmt0(psMonthly) + "/mo (from month 4)", psOngoingEx, psOngoingGst, psOngoingIncl],
+    ["Architect &amp; consultant budget", "One-off redesign / re-permit cost", consultantBudget, 0, consultantBudget],
+    ["Land tax (pro-rata)", (runtime/12).toFixed(2) + " yrs × " + fmt0(avgLandTax) + "/yr", landTaxTotal, 0, landTaxTotal],
+  ];
+  document.getElementById('costBreakdownBody').innerHTML = rows.map(r =>
+    `<tr><td>${r[0]}</td><td style="text-align:left;color:#6B6B70;font-size:12px;">${r[1]}</td><td>${fmt0(r[2])}</td><td>${fmt0(r[3])}</td><td><strong>${fmt0(r[4])}</strong></td></tr>`
+  ).join("");
+  document.getElementById('fTotalBasis').textContent = runtime + "-month program";
+  document.getElementById('fTotalEx').textContent = fmt0(totalEx);
+  document.getElementById('fTotalGst').textContent = fmt0(totalGst);
+  document.getElementById('fTotalIncl').textContent = fmt0(grandTotal);
+
+  // section 4 summary stats
+  document.getElementById('statBasementDisplay').textContent = fmtM(basementSaving);
+  document.getElementById('statInheritedDisplay').textContent = fmtM(grandTotal);
+
+  // uplift tables
+  ["s3", "s8"].forEach(key => {
+    const scen = SCEN[key];
+    const tbody = document.getElementById(key === "s3" ? "table3Body" : "table8Body");
+    tbody.innerHTML = GAINS.map(pct => {
+      const { uplift } = calcUplift(pct, scen, nsaRate);
+      const net = uplift + basementSaving - grandTotal;
+      const netClass = net >= 0 ? "pos" : "neg";
+      const cellClass = net >= 0 ? "cell-pos" : "cell-neg";
+      return `<tr><td>${Math.round(pct*100)}%</td><td>${fmtM(uplift)}</td><td>${fmtM(basementSaving)}</td><td class="${cellClass} ${netClass}">${fmtM(net)}</td></tr>`;
+    }).join("");
+  });
+}
+
+document.querySelectorAll('input').forEach(el => el.addEventListener('input', recalc));
+recalc();
+</script>
+</body>
+</html>
